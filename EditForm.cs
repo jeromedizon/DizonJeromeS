@@ -48,17 +48,17 @@ namespace Dizon_Jerome_Act_GUI
             // Mock implementation - replace with actual data retrieval logic
             return new UserProfile
             {
-                Name = "Viernes, Eleander James S.",
+                Name = "Dizon, Jerome S.",
                 Age = 20,
-                Address = "San Pedro Ili Alcala Pangasian",
-                ContactNumber = "09151508557",
-                Email = "e.j.viernes@gmail.com",
+                Address = "Bongato East, Bayambang, Pangasinan",
+                ContactNumber = "09936292196",
+                Email = "jeromeddizon@gmail.com",
                 Course = "BSIT",
-                Year = "Third",
-                ParentName = "Romel Viernes",
-                ParentContact = "09123457789",
-                Hobbies = "Gaming/Eating",
-                Nickname = "Der/Pats"
+                Year = "Third Year",
+                ParentName = "Thelma Dizon",
+                ParentContact = "09098786563",
+                Hobbies = "Billiard/Basketball",
+                Nickname = "Jerome"
             };
         }
 
