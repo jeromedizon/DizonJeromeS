@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,14 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Dizon_Jerome_Act_GUI;
+using MySql.Data.MySqlClient;
 
 namespace Dizon_Jerome_Act_GUI
 {
     public partial class LoginForm : Form
     {
-        private string validUsername = "jrmdzn";
-        private string validPassword = "12345";
         private int loginAttempts = 0;
+        private string connectionString = "server=localhost;database=student_db;user=root;password=12345";
 
         public LoginForm()
         {
@@ -36,35 +37,44 @@ namespace Dizon_Jerome_Act_GUI
             string username = UsernameTextBox.Text;
             string password = PasswordTextBox.Text;
 
-            if (username == validUsername && password == validPassword)
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
-                // Successful login
-                MessageBox.Show("Login Successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                StudentForm studentForm = new StudentForm();
-                this.Hide();
-                studentForm.Show();
-            }
-            else
-            {
-                // Failed login
-                string errorMessage = "";
-                if (username != validUsername && password != validPassword)
+                try
                 {
-                    errorMessage = "Incorrect Username and Password.";
-                }
-                else if (username != validUsername)
-                {
-                    errorMessage = "Incorrect Username.";
-                }
-                else if (password != validPassword)
-                {
-                    errorMessage = "Incorrect Password.";
-                }
-                MessageBox.Show(errorMessage + $"\nAttempt: {loginAttempts} of 5", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    conn.Open();
+                    string query = "SELECT * FROM students WHERE username = @username AND password = MD5(@password)";
 
-                // Clear password field after failed attempt
-                PasswordTextBox.Clear();
-                PasswordTextBox.Focus(); // Set focus back to password textbox for next attempt
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@username", username);
+                        cmd.Parameters.AddWithValue("@password", password);
+
+                        MySqlDataReader reader = cmd.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+
+                            MessageBox.Show("Login Successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            StudentForm studentForm = new StudentForm();
+                            this.Hide();
+                            studentForm.Show();
+                        }
+                        else
+                        {
+
+                            string errorMessage = "Invalid username or password.";
+                            MessageBox.Show(errorMessage + $"\nAttempt: {loginAttempts} of 5", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+
+                            PasswordTextBox.Clear();
+                            PasswordTextBox.Focus();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Database error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
     }
